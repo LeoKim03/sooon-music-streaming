@@ -21,7 +21,7 @@ const state={tracks:[],playlists:[],view:'home',selected:null,current:null,queue
 const audio=$('#audio');
 const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>{if(!Number.isFinite(n))return'0:00';return `${Math.floor(n/60)}:${String(Math.floor(n%60)).padStart(2,'0')}`};
-async function api(url,options={}){const r=await fetch(url,options);if(!r.ok){const e=await r.json().catch(()=>({}));throw Error(e.error||'요청을 처리하지 못했어요.')}return r.status===204?null:r.json()}
+async function api(url,options={}){const opts={...options,headers:{...(options.headers||{})}};if(['POST','PATCH','DELETE'].includes((opts.method||'GET').toUpperCase())){let token=sessionStorage.getItem('soonAdminPassword');if(!token){token=prompt('업로드와 플레이리스트 변경을 위한 운영자 비밀번호를 입력해 주세요.');if(!token)throw Error('운영자 비밀번호가 필요합니다.');sessionStorage.setItem('soonAdminPassword',token)}opts.headers.Authorization=`Bearer ${token}`}const r=await fetch(url,opts);if(!r.ok){const e=await r.json().catch(()=>({}));if(r.status===401)sessionStorage.removeItem('soonAdminPassword');throw Error(e.error||'요청을 처리하지 못했어요.')}return r.status===204?null:r.json()}
 function toast(s){const t=$('#toast');t.textContent=s;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2600)}
 function cover(i=0){return `<div class="cover c${i%4+1}">♫</div>`}
 function setView(view,selected=null){state.view=view;state.selected=selected;render()}
