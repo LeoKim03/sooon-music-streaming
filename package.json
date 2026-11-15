@@ -1,0 +1,7 @@
+{
+  "name": "soundvault",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal music archive and streaming library",
+  "scripts": { "start": "node server.js" }
+}
